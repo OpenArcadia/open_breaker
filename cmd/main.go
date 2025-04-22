@@ -2,6 +2,7 @@ package main
 
 import (
 	"open_breaker/entity"
+	"open_breaker/screens"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
@@ -31,12 +32,23 @@ func main() {
 	gameOver := false
 	rl.InitWindow(800, 450, "brick breaker")
 	defer rl.CloseWindow()
+	font := rl.LoadFontEx("assets/inter.ttf", 64, nil)
+	game := screens.Game{
+		State: screens.Menu,
+		Font:  font,
+	}
+	rl.SetTextureFilter(game.Font.Texture, rl.FilterBilinear)
 
 	p, ball, bricks := resetGame()
 
 	rl.SetTargetFPS(60)
 
 	for !rl.WindowShouldClose() {
+
+		if game.State == screens.Menu {
+			game.DrawMenu()
+			continue
+		}
 
 		if gameOver {
 			if rl.IsKeyPressed(rl.KeySpace) {
