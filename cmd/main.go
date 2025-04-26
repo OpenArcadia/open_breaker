@@ -3,6 +3,7 @@ package main
 import (
 	"open_breaker/entity"
 	"open_breaker/screens"
+	"os"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
@@ -24,7 +25,17 @@ func resetGame() (entity.Player, entity.Ball, []entity.Brick) {
 func main() {
 	rl.InitWindow(800, 450, "brick breaker")
 	defer rl.CloseWindow()
-	font := rl.LoadFontEx("assets/inter.ttf", 64, nil)
+
+	_, isFlatpak := os.LookupEnv("container")
+
+	var fontPath string
+	if isFlatpak {
+		fontPath = "/app/bin/assets/inter.ttf"
+	} else {
+		fontPath = "assets/inter.ttf"
+	}
+
+	font := rl.LoadFontEx(fontPath, 64, nil)
 	game := screens.Game{
 		State: screens.Menu,
 		Font:  font,
