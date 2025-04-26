@@ -27,10 +27,18 @@ func (p Player) GetRect() rl.Rectangle {
 
 func (p *Player) Update() {
 	if rl.IsKeyDown(rl.KeyLeft) {
-		p.X -= p.Speed
+		if p.X == 0 {
+			p.X = 0
+		} else {
+			p.X -= p.Speed
+		}
 	}
 	if rl.IsKeyDown(rl.KeyRight) {
-		p.X += p.Speed
+		if p.X+p.Width >= float32(rl.GetScreenWidth()) {
+			p.X = float32(rl.GetScreenWidth()) - p.Width
+		} else {
+			p.X += p.Speed
+		}
 	}
 }
 

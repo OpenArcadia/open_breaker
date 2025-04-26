@@ -10,6 +10,7 @@ const (
 	Paused
 	Finished
 	Menu
+	Over
 )
 
 type Game struct {

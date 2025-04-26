@@ -26,7 +26,9 @@ func (g *Game) DrawMenu() {
 		g.State = Playing
 	}
 	g.DrawButton(menuBtn, "Menu", buttonBg, textColor)
-	g.DrawButton(exitBtn, "Exit", buttonBg, textColor)
+	if g.DrawButton(exitBtn, "Exit", buttonBg, textColor) {
+		rl.CloseWindow()
+	}
 }
 
 func (g *Game) DrawButton(rect rl.Rectangle, text string, bg rl.Color, fg rl.Color) bool {
