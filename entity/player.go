@@ -29,6 +29,8 @@ func (p *Player) Update() {
 	if rl.IsKeyDown(rl.KeyLeft) {
 		if p.X == 0 {
 			p.X = 0
+		} else if rl.IsKeyDown(rl.KeySpace) {
+			p.X -= p.Speed * 2
 		} else {
 			p.X -= p.Speed
 		}
@@ -36,6 +38,8 @@ func (p *Player) Update() {
 	if rl.IsKeyDown(rl.KeyRight) {
 		if p.X+p.Width >= float32(rl.GetScreenWidth()) {
 			p.X = float32(rl.GetScreenWidth()) - p.Width
+		} else if rl.IsKeyDown(rl.KeySpace) {
+			p.X += p.Speed * 2
 		} else {
 			p.X += p.Speed
 		}
