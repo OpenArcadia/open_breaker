@@ -12,6 +12,7 @@ finish-args:
   - --env=DISPLAY=:0
   - --env=LD_LIBRARY_PATH=/app/lib64/libdecor/plugins-1:$LD_LIBRARY_PATH
   - --env=PKG_CONFIG_PATH=/app/lib64/pkgconfig:/app/lib/pkgconfig:$PKG_CONFIG_PATH
+  - --socket=pulseaudio
 modules:
   - name: open_breaker
     buildsystem: simple
