@@ -11,6 +11,15 @@ type Ball struct {
 	BounceSound *rl.Sound
 }
 
+type BallTrail struct {
+	Position rl.Vector2
+	Alpha    uint8
+}
+
+var ballTrail []BallTrail
+
+const MaxTrailLength = 10
+
 func NewBall(x, y float32, bounceSound *rl.Sound) Ball {
 	return Ball{
 		X:           x,
@@ -18,12 +27,21 @@ func NewBall(x, y float32, bounceSound *rl.Sound) Ball {
 		Radius:      8,
 		SpeedX:      4,
 		SpeedY:      -4,
-		Color:       rl.Magenta,
+		Color:       rl.Beige,
 		BounceSound: bounceSound,
 	}
 }
 
 func (b *Ball) Update(player Player) {
+	if len(ballTrail) > MaxTrailLength {
+		ballTrail = ballTrail[1:]
+	}
+
+	ballTrail = append(ballTrail, BallTrail{
+		Position: rl.Vector2{X: b.X, Y: b.Y},
+		Alpha:    255,
+	})
+
 	screenWidth := rl.GetScreenWidth()
 
 	b.X += b.SpeedX
@@ -53,6 +71,14 @@ func (b *Ball) Update(player Player) {
 
 func (b Ball) Draw() {
 	rl.DrawCircle(int32(b.X), int32(b.Y), b.Radius, b.Color)
+
+	for i, trail := range ballTrail {
+		fadeAlpha := uint8(i * 10)
+		radius := b.Radius - float32(float32(MaxTrailLength-i)*0.5)
+		if fadeAlpha > 0 {
+			rl.DrawCircleV(trail.Position, radius, rl.NewColor(245, 245, 220, fadeAlpha))
+		}
+	}
 }
 
 func (b Ball) Rect() rl.Rectangle {
