@@ -3,21 +3,25 @@ package entity
 import rl "github.com/gen2brain/raylib-go/raylib"
 
 type Brick struct {
-	X, Y    float32
-	Width   float32
-	Height  float32
-	Color   rl.Color
-	Visible bool
+	X, Y           float32
+	Width          float32
+	Height         float32
+	PrimaryColor   rl.Color
+	SecondaryColor rl.Color
+	Visible        bool
+	BreakSound     *rl.Sound
 }
 
-func NewBrick(x, y float32) Brick {
+func NewBrick(x, y float32, breakSound *rl.Sound) Brick {
 	return Brick{
-		X:       x,
-		Y:       y,
-		Width:   60,
-		Height:  20,
-		Color:   rl.Red,
-		Visible: true,
+		X:              x,
+		Y:              y,
+		Width:          60,
+		Height:         20,
+		PrimaryColor:   rl.DarkPurple,
+		SecondaryColor: rl.Purple,
+		Visible:        true,
+		BreakSound:     breakSound,
 	}
 }
 
@@ -27,6 +31,7 @@ func (b *Brick) Update(ball *Ball) {
 		ball.Radius,
 		b.GetRect(),
 	) {
+		rl.PlaySound(*b.BreakSound)
 		b.Visible = false
 		ball.SpeedY *= -1
 	}
@@ -38,6 +43,7 @@ func (b Brick) GetRect() rl.Rectangle {
 
 func (b Brick) Draw() {
 	if b.Visible {
-		rl.DrawRectangle(int32(b.X), int32(b.Y), int32(b.Width), int32(b.Height), b.Color)
+		rl.DrawRectangle(int32(b.X), int32(b.Y), int32(b.Width), int32(b.Height), b.PrimaryColor)
+		rl.DrawRectangle(int32(b.X+4), int32(b.Y+4), int32(b.Width-8), int32(b.Height-8), b.SecondaryColor)
 	}
 }

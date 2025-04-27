@@ -3,21 +3,23 @@ package entity
 import rl "github.com/gen2brain/raylib-go/raylib"
 
 type Ball struct {
-	X, Y   float32
-	Radius float32
-	SpeedX float32
-	SpeedY float32
-	Color  rl.Color
+	X, Y        float32
+	Radius      float32
+	SpeedX      float32
+	SpeedY      float32
+	Color       rl.Color
+	BounceSound *rl.Sound
 }
 
-func NewBall(x, y float32) Ball {
+func NewBall(x, y float32, bounceSound *rl.Sound) Ball {
 	return Ball{
-		X:      x,
-		Y:      y,
-		Radius: 8,
-		SpeedX: 4,
-		SpeedY: -4,
-		Color:  rl.DarkBlue,
+		X:           x,
+		Y:           y,
+		Radius:      8,
+		SpeedX:      4,
+		SpeedY:      -4,
+		Color:       rl.Magenta,
+		BounceSound: bounceSound,
 	}
 }
 
@@ -33,15 +35,18 @@ func (b *Ball) Update(player Player) {
 		player.GetRect(),
 	) {
 		hitPos := (b.X - (player.X + player.Width/2)) / (player.Width / 2)
+		rl.PlaySound(*b.BounceSound)
 		b.SpeedX = hitPos * 5
 		b.SpeedY *= -1
 	}
 
 	if b.X-b.Radius <= 0 || b.X+b.Radius >= float32(screenWidth) {
+		rl.PlaySound(*b.BounceSound)
 		b.SpeedX *= -1
 	}
 
 	if b.Y-b.Radius <= 0 {
+		rl.PlaySound(*b.BounceSound)
 		b.SpeedY *= -1
 	}
 }

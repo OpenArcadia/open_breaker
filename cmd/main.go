@@ -8,14 +8,14 @@ import (
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
-func resetGame() (entity.Player, entity.Ball, []entity.Brick) {
+func resetGame(breakSound, bounceSound *rl.Sound) (entity.Player, entity.Ball, []entity.Brick) {
 	p := entity.NewPlayer(350, 400)
-	ball := entity.NewBall(400, 300)
+	ball := entity.NewBall(400, 300, bounceSound)
 
 	bricks := []entity.Brick{}
 	for i := 0; i < 10; i++ {
 		for j := 0; j < 3; j++ {
-			bricks = append(bricks, entity.NewBrick(70+float32(i)*70, 50+float32(j)*30))
+			bricks = append(bricks, entity.NewBrick(70+float32(i)*70, 50+float32(j)*30, breakSound))
 		}
 	}
 
@@ -24,37 +24,48 @@ func resetGame() (entity.Player, entity.Ball, []entity.Brick) {
 
 func main() {
 	rl.InitWindow(800, 450, "brick breaker")
+	rl.InitAudioDevice()
 	defer rl.CloseWindow()
+	defer rl.CloseAudioDevice()
 
 	_, isFlatpak := os.LookupEnv("container")
 
-	var fontPath string
+	var basePath string
 	if isFlatpak {
-		fontPath = "/app/bin/assets/inter.ttf"
+		basePath = "/app/bin/assets/"
 	} else {
-		fontPath = "assets/inter.ttf"
+		basePath = "assets/"
 	}
 
-	font := rl.LoadFontEx(fontPath, 64, nil)
+	font := rl.LoadFontEx(basePath+"inter.ttf", 64, nil)
+
+	breakSound := rl.LoadSound(basePath + "music/break.ogg")
+	rl.SetSoundVolume(breakSound, 1.0)
+	bounceSound := rl.LoadSound(basePath + "music/bounce.ogg")
+	rl.SetSoundVolume(bounceSound, 1.0)
+	defer rl.UnloadSound(breakSound)
+	defer rl.UnloadSound(bounceSound)
+	defer rl.UnloadFont(font)
+
 	game := screens.Game{
 		State: screens.Menu,
 		Font:  font,
 	}
 	rl.SetTextureFilter(game.Font.Texture, rl.FilterBilinear)
 
-	p, ball, bricks := resetGame()
+	p, ball, bricks := resetGame(&breakSound, &bounceSound)
 
 	rl.SetTargetFPS(60)
 
 	for !rl.WindowShouldClose() {
 		if game.State == screens.Menu {
-			p, ball, bricks = resetGame()
+			p, ball, bricks = resetGame(&breakSound, &bounceSound)
 			game.DrawMenu()
 			continue
 		}
 
 		if game.State == screens.Over {
-			p, ball, bricks = resetGame()
+			p, ball, bricks = resetGame(&breakSound, &bounceSound)
 			game.DrawOver()
 			continue
 		}
