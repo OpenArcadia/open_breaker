@@ -10,6 +10,8 @@ finish-args:
   - --share=ipc
   - --env=GDK_BACKEND=x11
   - --env=DISPLAY=:0
+  - --env=LD_LIBRARY_PATH=/app/lib64/libdecor/plugins-1:$LD_LIBRARY_PATH
+  - --env=PKG_CONFIG_PATH=/app/lib64/pkgconfig:/app/lib/pkgconfig:$PKG_CONFIG_PATH
 modules:
   - name: open_breaker
     buildsystem: simple
@@ -21,4 +23,19 @@ modules:
     sources:
       - type: dir
         path: .
-
+  - name: libdecor
+    buildsystem: simple
+    config-opts:
+      - --prefix=/app
+      - --libdir=lib64
+      - --enable-gtk
+      - --enable-gtk3
+      - --enable-gtk4
+    sources:
+      - type: git
+        url: https://gitlab.freedesktop.org/libdecor/libdecor.git
+        branch: main
+    build-commands:
+      - meson _build --prefix=/app
+      - ninja -C _build
+      - ninja -C _build install
