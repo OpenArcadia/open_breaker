@@ -14,6 +14,8 @@ const (
 )
 
 type Game struct {
-	State State
-	Font  rl.Font
+	State     State
+	StartTime float64
+	EndTime   float64
+	Font      rl.Font
 }

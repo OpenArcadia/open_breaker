@@ -22,9 +22,20 @@ func resetGame(breakSound, bounceSound *rl.Sound) (entity.Player, entity.Ball, [
 	return p, ball, bricks
 }
 
+func Filter[T any](input []T, test func(T) bool) []T {
+	var result []T
+	for _, v := range input {
+		if test(v) {
+			result = append(result, v)
+		}
+	}
+	return result
+}
+
 func main() {
 	rl.InitWindow(800, 450, "brick breaker")
 	rl.InitAudioDevice()
+	rl.SetExitKey(0)
 	defer rl.CloseWindow()
 	defer rl.CloseAudioDevice()
 
@@ -58,6 +69,12 @@ func main() {
 	rl.SetTargetFPS(60)
 
 	for !rl.WindowShouldClose() {
+		if game.State == screens.Finished {
+			p, ball, bricks = resetGame(&breakSound, &bounceSound)
+			game.DrawFinishScreen()
+			continue
+		}
+
 		if game.State == screens.Menu {
 			p, ball, bricks = resetGame(&breakSound, &bounceSound)
 			game.DrawMenu()
@@ -75,6 +92,14 @@ func main() {
 
 		for i := range bricks {
 			bricks[i].Update(&ball)
+		}
+
+		bricks = Filter(bricks, func(b entity.Brick) bool {
+			return b.Visible
+		})
+
+		if len(bricks) == 0 {
+			game.State = screens.Finished
 		}
 
 		if ball.Y >= 450 {
