@@ -9,13 +9,13 @@ import (
 )
 
 func resetGame(breakSound, bounceSound *rl.Sound) (entity.Player, entity.Ball, []entity.Brick) {
-	p := entity.NewPlayer(350, 400)
+	p := entity.NewPlayer(350, float32(rl.GetScreenHeight()-100))
 	ball := entity.NewBall(400, 300, bounceSound)
 
 	bricks := []entity.Brick{}
 	for i := 0; i < 10; i++ {
 		for j := 0; j < 3; j++ {
-			bricks = append(bricks, entity.NewBrick(70+float32(i)*70, 50+float32(j)*30, breakSound))
+			bricks = append(bricks, entity.NewBrick(150+float32(i)*80, 50+float32(j)*40, breakSound))
 		}
 	}
 
@@ -33,7 +33,7 @@ func Filter[T any](input []T, test func(T) bool) []T {
 }
 
 func main() {
-	rl.InitWindow(800, 450, "brick breaker")
+	rl.InitWindow(1100, 600, "brick breaker")
 	rl.InitAudioDevice()
 	rl.SetExitKey(0)
 	defer rl.CloseWindow()
@@ -102,7 +102,7 @@ func main() {
 			game.State = screens.Finished
 		}
 
-		if ball.Y >= 450 {
+		if ball.Y >= float32(rl.GetScreenHeight()) {
 			game.State = screens.Over
 		}
 

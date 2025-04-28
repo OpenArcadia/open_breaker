@@ -16,8 +16,8 @@ func NewBrick(x, y float32, breakSound *rl.Sound) Brick {
 	return Brick{
 		X:              x,
 		Y:              y,
-		Width:          60,
-		Height:         20,
+		Width:          70,
+		Height:         30,
 		PrimaryColor:   rl.DarkPurple,
 		SecondaryColor: rl.Purple,
 		Visible:        true,
