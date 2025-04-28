@@ -107,7 +107,7 @@ func main() {
 		}
 
 		rl.BeginDrawing()
-		rl.ClearBackground(rl.Blank)
+		rl.ClearBackground(rl.NewColor(10, 15, 25, 255))
 
 		p.Draw()
 		ball.Draw()

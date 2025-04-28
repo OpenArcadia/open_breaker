@@ -27,7 +27,7 @@ func NewBall(x, y float32, bounceSound *rl.Sound) Ball {
 		Radius:      8,
 		SpeedX:      4,
 		SpeedY:      -4,
-		Color:       rl.Beige,
+		Color:       rl.Gold,
 		BounceSound: bounceSound,
 	}
 }
@@ -76,7 +76,7 @@ func (b Ball) Draw() {
 		fadeAlpha := uint8(i * 10)
 		radius := b.Radius - float32(float32(MaxTrailLength-i)*0.5)
 		if fadeAlpha > 0 {
-			rl.DrawCircleV(trail.Position, radius, rl.NewColor(245, 245, 220, fadeAlpha))
+			rl.DrawCircleV(trail.Position, radius, rl.NewColor(230, 230, 205, fadeAlpha))
 		}
 	}
 }
