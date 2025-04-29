@@ -12,7 +12,7 @@ func (g *Game) DrawFinishScreen() {
 	screenHeight := int32(rl.GetScreenHeight())
 
 	// Background: dark gradient simulation (solid color for now)
-	rl.ClearBackground(rl.NewColor(15, 18, 34, 255)) // Very dark blue
+	rl.ClearBackground(BACKGROUND_COLOR) // Very dark blue
 
 	// Center card
 	cardWidth := float32(400)
@@ -31,7 +31,7 @@ func (g *Game) DrawFinishScreen() {
 	rl.DrawTextEx(g.Font, congratsText, rl.Vector2{
 		X: cardX + cardWidth/2 - congratsSize.X/2,
 		Y: cardY + 40,
-	}, 40, 0, rl.NewColor(255, 193, 7, 255)) // Gold color
+	}, 40, 0, PRIMARY_COLOR) // Gold color
 
 	// Subtext
 	subText := "You finished the game!"
@@ -95,7 +95,7 @@ func (g *Game) DrawFinishScreen() {
 	exitButton := rl.NewRectangle(cardX+boxSpacing, cardY+310, buttonWidth, buttonHeight)
 
 	// Restart button
-	rl.DrawRectangleRounded(restartButton, 0.2, 5, rl.NewColor(255, 193, 7, 255))
+	rl.DrawRectangleRounded(restartButton, 0.2, 5, PRIMARY_COLOR)
 	restartText := "Restart (R)"
 	restartSize := rl.MeasureTextEx(g.Font, restartText, 20, 0)
 	rl.DrawTextEx(g.Font, restartText, rl.Vector2{
@@ -104,7 +104,7 @@ func (g *Game) DrawFinishScreen() {
 	}, 20, 0, rl.Black)
 
 	// Exit button
-	rl.DrawRectangleRounded(exitButton, 0.2, 5, rl.NewColor(50, 55, 65, 255))
+	rl.DrawRectangleRounded(exitButton, 0.2, 5, PRIMARY_COLOR)
 	exitText := "Exit (ESC)"
 	exitSize := rl.MeasureTextEx(g.Font, exitText, 20, 0)
 	rl.DrawTextEx(g.Font, exitText, rl.Vector2{

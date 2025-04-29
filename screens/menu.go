@@ -11,7 +11,7 @@ func (g *Game) DrawMenu() {
 	defer rl.EndDrawing()
 
 	// Background color (dark gradient feel)
-	rl.ClearBackground(rl.NewColor(10, 15, 25, 255))
+	rl.ClearBackground(BACKGROUND_COLOR)
 
 	screenWidth := int32(rl.GetScreenWidth())
 	screenHeight := int32(rl.GetScreenHeight())
@@ -24,13 +24,13 @@ func (g *Game) DrawMenu() {
 
 	panelRect := rl.NewRectangle(float32(panelX), float32(panelY), float32(panelWidth), float32(panelHeight))
 	rl.DrawRectangleRounded(panelRect, 0.05, 10, rl.NewColor(10, 10, 10, 220))
-	rl.DrawRectangleRoundedLines(panelRect, 0.05, 10, rl.Fade(rl.Gold, 0.2)) // Light gold border
+	rl.DrawRectangleRoundedLines(panelRect, 0.05, 10, rl.Fade(PRIMARY_COLOR, 0.2))
 
 	// Title text
 	title := "OPEN BREAKER"
 	titleSize := rl.MeasureTextEx(g.Font, title, 48, 0)
 	titleX := float32(panelX) + (float32(panelWidth)-titleSize.X)/2
-	rl.DrawTextEx(g.Font, title, rl.Vector2{X: titleX, Y: float32(panelY) + 30}, 48, 0, rl.Gold)
+	rl.DrawTextEx(g.Font, title, rl.Vector2{X: titleX, Y: float32(panelY) + 30}, 48, 0, PRIMARY_COLOR)
 
 	// Subtitle
 	subtitle := "Break all the bricks to win!"
@@ -45,14 +45,13 @@ func (g *Game) DrawMenu() {
 
 	firstButtonY := panelY + 150
 
-	// Play Game Button (Gold color)
 	playBtn := rl.NewRectangle(
 		float32(screenWidth/2-buttonWidth/2),
 		float32(firstButtonY),
 		float32(buttonWidth),
 		float32(buttonHeight),
 	)
-	if g.DrawButton(playBtn, "Play Game", rl.Gold, rl.Black) {
+	if g.DrawButton(playBtn, "Play Game", PRIMARY_COLOR, rl.Black) {
 		g.State = Playing
 	}
 
