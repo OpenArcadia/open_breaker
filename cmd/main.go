@@ -1,6 +1,7 @@
 package main
 
 import (
+	"open_breaker/effects"
 	"open_breaker/entity"
 	"open_breaker/screens"
 	"os"
@@ -8,11 +9,11 @@ import (
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
-func resetGame(breakSound, bounceSound *rl.Sound) (entity.Player, entity.Ball, []entity.Brick) {
+func resetGame(breakSound, bounceSound *rl.Sound) (entity.Player, entity.Ball, []*entity.Brick) {
 	p := entity.NewPlayer(350, float32(rl.GetScreenHeight()-100))
 	ball := entity.NewBall(400, 300, bounceSound)
 
-	bricks := []entity.Brick{}
+	bricks := []*entity.Brick{}
 	for i := 0; i < 10; i++ {
 		for j := 0; j < 3; j++ {
 			bricks = append(bricks, entity.NewBrick(150+float32(i)*80, 50+float32(j)*40, breakSound))
@@ -90,11 +91,7 @@ func main() {
 		p.Update()
 		ball.Update(p)
 
-		for i := range bricks {
-			bricks[i].Update(&ball)
-		}
-
-		bricks = Filter(bricks, func(b entity.Brick) bool {
+		bricks = Filter(bricks, func(b *entity.Brick) bool {
 			return b.Visible
 		})
 
@@ -105,6 +102,10 @@ func main() {
 		if ball.Y >= float32(rl.GetScreenHeight()) {
 			game.State = screens.Over
 		}
+		dt := rl.GetFrameTime()
+		for i := range game.Particles {
+			game.Particles[i].Update(dt)
+		}
 
 		rl.BeginDrawing()
 		rl.ClearBackground(rl.NewColor(10, 15, 25, 255))
@@ -112,9 +113,25 @@ func main() {
 		p.Draw()
 		ball.Draw()
 		for i := range bricks {
-			bricks[i].Draw()
+			b := bricks[i]
+			b.Draw()
+			if !b.Update(&ball) {
+				for j := 0; j < 10; j++ {
+					pX := b.X + b.Width/2
+					pY := b.Y + b.Height/2
+					game.Particles = append(game.Particles, effects.NewParticle(pX, pY, b.PrimaryColor))
+				}
+			}
+		}
+
+		for _, p := range game.Particles {
+			p.Draw()
 		}
 
 		rl.EndDrawing()
+
+		game.Particles = Filter(game.Particles, func(p *effects.Particle) bool {
+			return p.Active
+		})
 	}
 }

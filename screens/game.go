@@ -1,6 +1,10 @@
 package screens
 
-import rl "github.com/gen2brain/raylib-go/raylib"
+import (
+	"open_breaker/effects"
+
+	rl "github.com/gen2brain/raylib-go/raylib"
+)
 
 type State int
 
@@ -18,4 +22,6 @@ type Game struct {
 	StartTime float64
 	EndTime   float64
 	Font      rl.Font
+
+	Particles []*effects.Particle
 }

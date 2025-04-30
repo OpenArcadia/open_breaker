@@ -1,6 +1,8 @@
 package entity
 
-import rl "github.com/gen2brain/raylib-go/raylib"
+import (
+	rl "github.com/gen2brain/raylib-go/raylib"
+)
 
 type Brick struct {
 	X, Y           float32
@@ -12,8 +14,8 @@ type Brick struct {
 	BreakSound     *rl.Sound
 }
 
-func NewBrick(x, y float32, breakSound *rl.Sound) Brick {
-	return Brick{
+func NewBrick(x, y float32, breakSound *rl.Sound) *Brick {
+	return &Brick{
 		X:              x,
 		Y:              y,
 		Width:          70,
@@ -25,7 +27,7 @@ func NewBrick(x, y float32, breakSound *rl.Sound) Brick {
 	}
 }
 
-func (b *Brick) Update(ball *Ball) {
+func (b *Brick) Update(ball *Ball) bool {
 	if b.Visible && rl.CheckCollisionCircleRec(
 		rl.NewVector2(ball.X, ball.Y),
 		ball.Radius,
@@ -34,7 +36,11 @@ func (b *Brick) Update(ball *Ball) {
 		rl.PlaySound(*b.BreakSound)
 		b.Visible = false
 		ball.SpeedY *= -1
+
+		return false
 	}
+
+	return true
 }
 
 func (b Brick) GetRect() rl.Rectangle {
