@@ -3,7 +3,7 @@ package screens
 import (
 	"open_breaker/effects"
 	"open_breaker/entity"
-	"os"
+	"open_breaker/utility"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
@@ -36,17 +36,10 @@ func Filter[T any](input []T, test func(T) bool) []T {
 }
 
 func (g *GameScreen) Create() {
-	_, isFlatpak := os.LookupEnv("container")
 
-	var basePath string
-	if isFlatpak {
-		basePath = "/app/bin/assets/"
-	} else {
-		basePath = "assets/"
-	}
-	breakSound := rl.LoadSound(basePath + "music/break.ogg")
+	breakSound := rl.LoadSound(utility.LoadAssetFrom("music/break.ogg"))
 	rl.SetSoundVolume(breakSound, 1.0)
-	bounceSound := rl.LoadSound(basePath + "music/bounce.ogg")
+	bounceSound := rl.LoadSound(utility.LoadAssetFrom("music/bounce.ogg"))
 	rl.SetSoundVolume(bounceSound, 1.0)
 
 	g.BounceSound = &bounceSound
@@ -74,13 +67,20 @@ func (g *GameScreen) Create() {
 		}
 
 	case LEVEL_THREE:
-		for i := 0; i < 14; i++ {
+		for i := 0; i < 13; i++ {
 			for j := 0; j < 6; j++ {
-				breakable := !(j <= 1 && (i+j)%4 == 0) // sprinkle unbreakables in top two rows
-				bricks = append(bricks, entity.NewBrick(80+float32(i)*50, 30+float32(j)*30, &breakSound, breakable))
+				breakable := !(j == 5 && i != 6)
+				bricks = append(bricks, entity.NewBrick(30+float32(i)*80, 30+float32(j)*40, &breakSound, breakable))
 			}
 		}
 
+	case LEVEL_FOUR:
+		for i := 0; i < 13; i++ {
+			for j := 0; j < 6; j++ {
+				breakable := (!(j == 5 && i != 6) && !((i == 5 || i == 7) && j >= 2))
+				bricks = append(bricks, entity.NewBrick(30+float32(i)*80, 30+float32(j)*40, &breakSound, breakable))
+			}
+		}
 	default:
 		for i := 0; i < 10; i++ {
 			for j := 0; j < 3; j++ {

@@ -2,7 +2,7 @@ package main
 
 import (
 	"open_breaker/screens"
-	"os"
+	"open_breaker/utility"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
@@ -24,16 +24,7 @@ func main() {
 	defer rl.CloseWindow()
 	defer rl.CloseAudioDevice()
 
-	_, isFlatpak := os.LookupEnv("container")
-
-	var basePath string
-	if isFlatpak {
-		basePath = "/app/bin/assets/"
-	} else {
-		basePath = "assets/"
-	}
-
-	font := rl.LoadFontEx(basePath+"inter.ttf", 64, nil)
+	font := rl.LoadFontEx(utility.LoadAssetFrom("inter.ttf"), 64, nil)
 	defer rl.UnloadFont(font)
 
 	rl.SetTextureFilter(font.Texture, rl.FilterBilinear)

@@ -32,43 +32,56 @@ func NewBrick(x, y float32, breakSound *rl.Sound, breakable bool) *Brick {
 }
 
 func (b *Brick) Update(ball *Ball) bool {
-	if !b.Visible {
-		return true
-	}
-
 	brickRect := b.GetRect()
 	ballPos := rl.NewVector2(ball.X, ball.Y)
 
 	if rl.CheckCollisionCircleRec(ballPos, ball.Radius, brickRect) {
-		notShowAnimation := true
+		noAnimation := true
 		if b.Breakable {
 			rl.PlaySound(*b.BreakSound)
 			b.Visible = false
-			notShowAnimation = false
+			noAnimation = false
 		}
 
-		// Calculate the center of the ball and brick
+		// Find centers
 		ballCenterX := ball.X
 		ballCenterY := ball.Y
 		brickCenterX := b.X + b.Width/2
 		brickCenterY := b.Y + b.Height/2
 
-		// Calculate the difference
+		// Deltas
 		dx := ballCenterX - brickCenterX
 		dy := ballCenterY - brickCenterY
-
-		// Calculate overlap distances
-		halfWidth := b.Width / 2
 		absDx := float32(math.Abs(float64(dx)))
 		absDy := float32(math.Abs(float64(dy)))
 
-		if absDx > halfWidth && absDx > absDy {
+		// Half-dimensions
+		halfW := b.Width / 2
+		halfH := b.Height / 2
+
+		// Calculate overlap along X and Y
+		overlapX := halfW + ball.Radius - absDx
+		overlapY := halfH + ball.Radius - absDy
+
+		if overlapX < overlapY {
+			// Push out horizontally
+			if dx > 0 {
+				ball.X += overlapX
+			} else {
+				ball.X -= overlapX
+			}
 			ball.SpeedX *= -1
 		} else {
+			// Push out vertically
+			if dy > 0 {
+				ball.Y += overlapY
+			} else {
+				ball.Y -= overlapY
+			}
 			ball.SpeedY *= -1
 		}
 
-		return notShowAnimation
+		return noAnimation
 	}
 
 	return true

@@ -1,3 +1,7 @@
 .flatpak-builder/
 repo/
+build-dir/
 open_breaker.flatpak
+open_breaker
+main
+windows-build/
