@@ -5,7 +5,8 @@ import (
 )
 
 type GameOverScreen struct {
-	Font *rl.Font
+	Font      *rl.Font
+	FromLevel LevelName
 }
 
 func (g *GameOverScreen) Create() {}
@@ -37,7 +38,8 @@ func (g *GameOverScreen) Render() {
 
 	if rl.IsKeyPressed(rl.KeySpace) {
 		ChangeScreen(&GameScreen{
-			Font: g.Font,
+			Font:         g.Font,
+			CurrentLevel: g.FromLevel,
 		})
 	}
 	if rl.IsKeyPressed(rl.KeyEscape) {

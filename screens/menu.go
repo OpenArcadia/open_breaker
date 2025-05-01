@@ -101,7 +101,6 @@ func DrawButton(rect rl.Rectangle, text string, bg rl.Color, fg rl.Color, font *
 	isHovered := rl.CheckCollisionPointRec(mousePos, rect)
 	isClicked := isHovered && rl.IsMouseButtonPressed(rl.MouseLeftButton)
 
-	// Hover effect: Lighten color and add shadow
 	currentBg := bg
 	if isHovered {
 		currentBg = rl.Fade(bg, 0.8)
@@ -111,12 +110,10 @@ func DrawButton(rect rl.Rectangle, text string, bg rl.Color, fg rl.Color, font *
 	shadowOffset := float32(4)
 	shadowColor := rl.NewColor(0, 0, 0, 150)
 
-	// Draw shadow first, under the button
 	if isHovered || isClicked {
 		rl.DrawRectangleRounded(rl.NewRectangle(rect.X+shadowOffset, rect.Y+shadowOffset, rect.Width, rect.Height), 0.5, 1, shadowColor)
 	}
 
-	// Draw the main button with rounded corners
 	rl.DrawRectangleRounded(rect, 0.5, 1, currentBg)
 
 	// Center the text on the button

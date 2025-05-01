@@ -56,9 +56,36 @@ func (g *GameScreen) Create() {
 	g.Player = entity.NewPlayer(350, float32(rl.GetScreenHeight()-100))
 
 	bricks := []*entity.Brick{}
-	for i := 0; i < 10; i++ {
-		for j := 0; j < 3; j++ {
-			bricks = append(bricks, entity.NewBrick(150+float32(i)*80, 50+float32(j)*40, &breakSound))
+	switch g.CurrentLevel {
+	case LEVEL_ONE:
+		// 10 columns, 3 rows
+		for i := 0; i < 10; i++ {
+			for j := 0; j < 3; j++ {
+				bricks = append(bricks, entity.NewBrick(150+float32(i)*80, 80+float32(j)*40, &breakSound, true))
+			}
+		}
+
+	case LEVEL_TWO:
+		for i := 0; i < 12; i++ {
+			for j := 0; j < 5; j++ {
+				breakable := !(j == 0 && i%3 == 0) // every 3rd block in top row is unbreakable
+				bricks = append(bricks, entity.NewBrick(80+float32(i)*80, 50+float32(j)*40, &breakSound, breakable))
+			}
+		}
+
+	case LEVEL_THREE:
+		for i := 0; i < 14; i++ {
+			for j := 0; j < 6; j++ {
+				breakable := !(j <= 1 && (i+j)%4 == 0) // sprinkle unbreakables in top two rows
+				bricks = append(bricks, entity.NewBrick(80+float32(i)*50, 30+float32(j)*30, &breakSound, breakable))
+			}
+		}
+
+	default:
+		for i := 0; i < 10; i++ {
+			for j := 0; j < 3; j++ {
+				bricks = append(bricks, entity.NewBrick(150+float32(i)*80, 50+float32(j)*40, &breakSound, true))
+			}
 		}
 	}
 	g.Bricks = bricks
@@ -81,7 +108,8 @@ func (g *GameScreen) Render() {
 
 	if g.Ball.Y >= float32(rl.GetScreenHeight()) {
 		ChangeScreen(&GameOverScreen{
-			Font: g.Font,
+			Font:      g.Font,
+			FromLevel: g.CurrentLevel,
 		})
 	}
 	dt := rl.GetFrameTime()
