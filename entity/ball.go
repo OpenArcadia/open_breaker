@@ -20,8 +20,8 @@ var ballTrail []BallTrail
 
 const MaxTrailLength = 10
 
-func NewBall(x, y float32, bounceSound *rl.Sound) Ball {
-	return Ball{
+func NewBall(x, y float32, bounceSound *rl.Sound) *Ball {
+	return &Ball{
 		X:           x,
 		Y:           y,
 		Radius:      8,

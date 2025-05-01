@@ -4,7 +4,13 @@ import (
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
-func (g *Game) DrawOver() {
+type GameOverScreen struct {
+	Font *rl.Font
+}
+
+func (g *GameOverScreen) Create() {}
+
+func (g *GameOverScreen) Render() {
 	rl.BeginDrawing()
 	defer rl.EndDrawing()
 
@@ -30,9 +36,16 @@ func (g *Game) DrawOver() {
 	rl.DrawText(subtitle2, (int32(screenWidth)-sub2Width)/2, int32(screenHeight/2+50), int32(subSize), rl.White)
 
 	if rl.IsKeyPressed(rl.KeySpace) {
-		g.State = Playing
+		ChangeScreen(&GameScreen{
+			Font: g.Font,
+		})
 	}
 	if rl.IsKeyPressed(rl.KeyEscape) {
-		g.State = Menu
+		ChangeScreen(&MenuScreen{
+			Font: g.Font,
+		})
+
 	}
 }
+
+func (g *GameOverScreen) Dispose() {}

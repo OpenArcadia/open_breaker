@@ -10,8 +10,8 @@ type Player struct {
 	Color  rl.Color
 }
 
-func NewPlayer(x, y float32) Player {
-	return Player{
+func NewPlayer(x, y float32) *Player {
+	return &Player{
 		X:      x,
 		Y:      y,
 		Width:  100,

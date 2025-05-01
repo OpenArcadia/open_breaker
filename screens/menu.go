@@ -6,7 +6,13 @@ import (
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
-func (g *Game) DrawMenu() {
+type MenuScreen struct {
+	Font *rl.Font
+}
+
+func (m *MenuScreen) Create() {}
+
+func (m *MenuScreen) Render() {
 	rl.BeginDrawing()
 	defer rl.EndDrawing()
 
@@ -28,15 +34,15 @@ func (g *Game) DrawMenu() {
 
 	// Title text
 	title := "OPEN BREAKER"
-	titleSize := rl.MeasureTextEx(g.Font, title, 48, 0)
+	titleSize := rl.MeasureTextEx(*m.Font, title, 48, 0)
 	titleX := float32(panelX) + (float32(panelWidth)-titleSize.X)/2
-	rl.DrawTextEx(g.Font, title, rl.Vector2{X: titleX, Y: float32(panelY) + 30}, 48, 0, PRIMARY_COLOR)
+	rl.DrawTextEx(*m.Font, title, rl.Vector2{X: titleX, Y: float32(panelY) + 30}, 48, 0, PRIMARY_COLOR)
 
 	// Subtitle
 	subtitle := "Break all the bricks to win!"
-	subtitleSize := rl.MeasureTextEx(g.Font, subtitle, 20, 0)
+	subtitleSize := rl.MeasureTextEx(*m.Font, subtitle, 20, 0)
 	subtitleX := float32(panelX) + (float32(panelWidth)-subtitleSize.X)/2
-	rl.DrawTextEx(g.Font, subtitle, rl.Vector2{X: subtitleX, Y: float32(panelY) + 90}, 20, 0, rl.White)
+	rl.DrawTextEx(*m.Font, subtitle, rl.Vector2{X: subtitleX, Y: float32(panelY) + 90}, 20, 0, rl.White)
 
 	// Buttons
 	buttonWidth := int32(250)
@@ -51,8 +57,8 @@ func (g *Game) DrawMenu() {
 		float32(buttonWidth),
 		float32(buttonHeight),
 	)
-	if g.DrawButton(playBtn, "Play Game", PRIMARY_COLOR, rl.Black) {
-		g.State = Playing
+	if DrawButton(playBtn, "Play Game", PRIMARY_COLOR, rl.Black, m.Font) {
+		ChangeScreen(&LevelScreen{Font: m.Font})
 	}
 
 	// Other buttons (white buttons)
@@ -64,7 +70,7 @@ func (g *Game) DrawMenu() {
 			float32(buttonWidth),
 			float32(buttonHeight),
 		)
-		if g.DrawButton(btn, label, rl.White, rl.Black) {
+		if DrawButton(btn, label, rl.White, rl.Black, m.Font) {
 			switch i {
 			case 0:
 				// High Scores
@@ -81,14 +87,16 @@ func (g *Game) DrawMenu() {
 
 	// Footer (copyright)
 	footerText := "Open Breaker | v1.0.0"
-	footerSize := rl.MeasureTextEx(g.Font, footerText, 16, 0)
-	rl.DrawTextEx(g.Font, footerText, rl.Vector2{
+	footerSize := rl.MeasureTextEx(*m.Font, footerText, 16, 0)
+	rl.DrawTextEx(*m.Font, footerText, rl.Vector2{
 		X: float32(screenWidth/2) - footerSize.X/2,
 		Y: float32(panelY + panelHeight - 30),
 	}, 16, 0, rl.Fade(rl.White, 0.5))
 }
 
-func (g *Game) DrawButton(rect rl.Rectangle, text string, bg rl.Color, fg rl.Color) bool {
+func (m *MenuScreen) Dispose() {}
+
+func DrawButton(rect rl.Rectangle, text string, bg rl.Color, fg rl.Color, font *rl.Font) bool {
 	mousePos := rl.GetMousePosition()
 	isHovered := rl.CheckCollisionPointRec(mousePos, rect)
 	isClicked := isHovered && rl.IsMouseButtonPressed(rl.MouseLeftButton)
@@ -113,12 +121,12 @@ func (g *Game) DrawButton(rect rl.Rectangle, text string, bg rl.Color, fg rl.Col
 
 	// Center the text on the button
 	fontSize := float32(28)
-	textSize := rl.MeasureTextEx(g.Font, text, fontSize, 0)
+	textSize := rl.MeasureTextEx(*font, text, fontSize, 0)
 	textX := rect.X + (rect.Width-textSize.X)/2
 	textY := rect.Y + (rect.Height-textSize.Y)/2
 
 	// Draw text on the button
-	rl.DrawTextEx(g.Font, text, rl.Vector2{X: textX, Y: textY}, fontSize, 0, fg)
+	rl.DrawTextEx(*font, text, rl.Vector2{X: textX, Y: textY}, fontSize, 0, fg)
 
 	return isClicked
 }
