@@ -140,8 +140,7 @@ func drawLevelCard(g *LevelScreen, level Level, rect rl.Rectangle) {
 		playColor = rl.Fade(playColor, 0.3)
 	}
 	rl.DrawRectangleRounded(playBtn, 0.3, 10, playColor)
-	rl.DrawTextEx(*g.Font, "▶",
-		rl.Vector2{X: playBtn.X + 6, Y: playBtn.Y + 2}, 20, 0, rl.Black)
+	entity.DrawPlayIcon(playBtn.X+10, playBtn.Y+16, 12, rl.Black)
 
 	// Play button interaction (optional)
 	if level.Unlocked &&
