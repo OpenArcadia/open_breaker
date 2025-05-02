@@ -21,8 +21,7 @@ type GameScreen struct {
 	Ball         *entity.Ball
 	BounceSound  *rl.Sound
 	BreakSound   *rl.Sound
-
-	Particles []*effects.Particle
+	Particles    []*effects.Particle
 }
 
 func Filter[T any](input []T, test func(T) bool) []T {
@@ -54,7 +53,7 @@ func (g *GameScreen) Create() {
 		// 10 columns, 3 rows
 		for i := 0; i < 10; i++ {
 			for j := 0; j < 3; j++ {
-				bricks = append(bricks, entity.NewBrick(150+float32(i)*80, 80+float32(j)*40, &breakSound, true))
+				bricks = append(bricks, entity.NewBrick(70, 30, 150+float32(i)*80, 80+float32(j)*40, &breakSound, true))
 			}
 		}
 
@@ -62,7 +61,7 @@ func (g *GameScreen) Create() {
 		for i := 0; i < 12; i++ {
 			for j := 0; j < 5; j++ {
 				breakable := !(j == 0 && i%3 == 0) // every 3rd block in top row is unbreakable
-				bricks = append(bricks, entity.NewBrick(80+float32(i)*80, 50+float32(j)*40, &breakSound, breakable))
+				bricks = append(bricks, entity.NewBrick(70, 30, 80+float32(i)*80, 50+float32(j)*40, &breakSound, breakable))
 			}
 		}
 
@@ -70,7 +69,7 @@ func (g *GameScreen) Create() {
 		for i := 0; i < 13; i++ {
 			for j := 0; j < 6; j++ {
 				breakable := !(j == 5 && i != 6)
-				bricks = append(bricks, entity.NewBrick(30+float32(i)*80, 30+float32(j)*40, &breakSound, breakable))
+				bricks = append(bricks, entity.NewBrick(70, 30, 30+float32(i)*80, 30+float32(j)*40, &breakSound, breakable))
 			}
 		}
 
@@ -78,13 +77,24 @@ func (g *GameScreen) Create() {
 		for i := 0; i < 13; i++ {
 			for j := 0; j < 6; j++ {
 				breakable := (!(j == 5 && i != 6) && !((i == 5 || i == 7) && j >= 2))
-				bricks = append(bricks, entity.NewBrick(30+float32(i)*80, 30+float32(j)*40, &breakSound, breakable))
+				bricks = append(bricks, entity.NewBrick(70, 30, 30+float32(i)*80, 30+float32(j)*40, &breakSound, breakable))
 			}
 		}
-	default:
-		for i := 0; i < 10; i++ {
-			for j := 0; j < 3; j++ {
-				bricks = append(bricks, entity.NewBrick(150+float32(i)*80, 50+float32(j)*40, &breakSound, true))
+	case LEVEL_FIVE:
+		for i := 0; i < 21; i++ {
+			for j := 0; j < 7; j++ {
+				if j == 4 {
+					continue
+				}
+				x := 30 + float32(i)*50
+				y := 30 + float32(j)*30
+
+				unbreakableColumn := j == 6 || j == 3
+				forceBreakRow := i == 11
+
+				breakable := !(unbreakableColumn && !forceBreakRow)
+
+				bricks = append(bricks, entity.NewBrick(40, 20, x, y, &breakSound, breakable))
 			}
 		}
 	}

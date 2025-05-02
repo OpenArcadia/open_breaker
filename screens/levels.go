@@ -15,11 +15,6 @@ const (
 	LEVEL_THREE   LevelName = "Level 3"
 	LEVEL_FOUR    LevelName = "Level 4"
 	LEVEL_FIVE    LevelName = "Level 5"
-	LEVEL_SIX     LevelName = "Level 6"
-	LEVEL_SEVEN   LevelName = "Level 7"
-	LEVEL_EIGHT   LevelName = "Level 8"
-	LEVEL_NINE    LevelName = "Level 9"
-	LEVEL_TEN     LevelName = "Level 10"
 )
 
 func (ln *LevelName) ToString() string {
@@ -55,9 +50,6 @@ func (g *LevelScreen) Render() {
 		{"Level 3", true, 1},
 		{"Level 4", true, 0},
 		{"Level 5", true, 0},
-		{"Level 6", false, 0},
-		{"Level 7", false, 0},
-		{"Level 8", false, 0},
 	}
 
 	drawLevelCards(g, levels)

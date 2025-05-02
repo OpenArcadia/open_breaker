@@ -17,12 +17,12 @@ type Brick struct {
 	BreakSound     *rl.Sound
 }
 
-func NewBrick(x, y float32, breakSound *rl.Sound, breakable bool) *Brick {
+func NewBrick(width, height float32, x, y float32, breakSound *rl.Sound, breakable bool) *Brick {
 	return &Brick{
 		X:              x,
 		Y:              y,
-		Width:          70,
-		Height:         30,
+		Width:          width,
+		Height:         height,
 		PrimaryColor:   rl.DarkPurple,
 		SecondaryColor: rl.Purple,
 		Visible:        true,
