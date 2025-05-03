@@ -8,8 +8,8 @@
 
 | Platform | Download Link |
 |----------|----------------|
-| 🪟 Windows | [Download open_breaker.exe](https://example.com/open_breaker_windows.zip) |
-| 🐧 Linux   | [Download open_breaker (x86_64)](https://example.com/open_breaker_linux.tar.gz) |
+| 🪟 Windows | [Download open_breaker.tar.gz](https://github.com/OpenArcadia/open_breaker/releases/download/V-1.0.0-alpha1/open_breaker_windows.tar.gz) |
+| 🐧 Linux   | [Download open_breaker (flatpak)](https://github.com/OpenArcadia/open_breaker/releases/download/V-1.0.0-alpha1/open_breaker.flatpak) |
 
 > ⚠️ Make sure you have OpenGL-compatible graphics and necessary permissions to run the binaries.
 
