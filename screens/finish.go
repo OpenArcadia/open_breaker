@@ -1,14 +1,27 @@
 package screens
 
 import (
+	"fmt"
+	"time"
+
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
 type FinishScreen struct {
-	Font *rl.Font
+	Font         *rl.Font
+	StartTime    time.Time
+	EndTime      time.Time
+	displayTime  string
+	CurrentLevel LevelName
+	NextLevel    LevelName
 }
 
-func (f *FinishScreen) Create() {}
+func (f *FinishScreen) Create() {
+	duration := f.EndTime.Sub(f.StartTime)
+	minutes := int(duration.Minutes())
+	seconds := int(duration.Seconds()) % 60
+	f.displayTime = fmt.Sprintf("%02d:%02d", minutes, seconds)
+}
 
 func (f *FinishScreen) Render() {
 	rl.BeginDrawing()
@@ -17,29 +30,22 @@ func (f *FinishScreen) Render() {
 	screenWidth := int32(rl.GetScreenWidth())
 	screenHeight := int32(rl.GetScreenHeight())
 
-	// Background: dark gradient simulation (solid color for now)
-	rl.ClearBackground(BACKGROUND_COLOR) // Very dark blue
+	rl.ClearBackground(BACKGROUND_COLOR)
 
-	// Center card
 	cardWidth := float32(400)
-	cardHeight := float32(400)
+	cardHeight := float32(460)
 	cardX := float32(screenWidth)/2 - cardWidth/2
 	cardY := float32(screenHeight)/2 - cardHeight/2
 
 	rl.DrawRectangleRounded(rl.NewRectangle(cardX, cardY, cardWidth, cardHeight), 0.05, 10, rl.NewColor(20, 24, 40, 255))
 
-	// Trophy emoji (optional: if you want you could draw an icon here)
-	// rl.DrawTextEx(*f.Font, "🏆", rl.Vector2{X: cardX + cardWidth/2 - 30, Y: cardY + 20}, 60, 0, rl.Gold)
-
-	// Congratulations
 	congratsText := "Congratulations!"
 	congratsSize := rl.MeasureTextEx(*f.Font, congratsText, 40, 0)
 	rl.DrawTextEx(*f.Font, congratsText, rl.Vector2{
 		X: cardX + cardWidth/2 - congratsSize.X/2,
 		Y: cardY + 40,
-	}, 40, 0, PRIMARY_COLOR) // Gold color
+	}, 40, 0, PRIMARY_COLOR)
 
-	// Subtext
 	subText := "You finished the game!"
 	subSize := rl.MeasureTextEx(*f.Font, subText, 20, 0)
 	rl.DrawTextEx(*f.Font, subText, rl.Vector2{
@@ -47,16 +53,13 @@ func (f *FinishScreen) Render() {
 		Y: cardY + 100,
 	}, 20, 0, rl.LightGray)
 
-	// Score and Time
 	scoreLabel := "Score"
 	timeLabel := "Time"
 	scoreValue := "8000" // Replace with actual score
-	timeValue := "02:45" // Replace with actual time
 
 	labelFontSize := float32(16)
 	valueFontSize := float32(24)
 
-	// Score box
 	boxWidth := float32(140)
 	boxHeight := float32(70)
 	boxSpacing := float32(20)
@@ -67,7 +70,6 @@ func (f *FinishScreen) Render() {
 	rl.DrawRectangleRounded(scoreBox, 0.1, 5, rl.NewColor(10, 12, 20, 255))
 	rl.DrawRectangleRounded(timeBox, 0.1, 5, rl.NewColor(10, 12, 20, 255))
 
-	// Draw score text
 	scoreLabelSize := rl.MeasureTextEx(*f.Font, scoreLabel, labelFontSize, 0)
 	rl.DrawTextEx(*f.Font, scoreLabel, rl.Vector2{
 		X: scoreBox.X + scoreBox.Width/2 - scoreLabelSize.X/2,
@@ -80,15 +82,14 @@ func (f *FinishScreen) Render() {
 		Y: scoreBox.Y + 30,
 	}, valueFontSize, 0, rl.NewColor(255, 193, 7, 255))
 
-	// Draw time text
 	timeLabelSize := rl.MeasureTextEx(*f.Font, timeLabel, labelFontSize, 0)
 	rl.DrawTextEx(*f.Font, timeLabel, rl.Vector2{
 		X: timeBox.X + timeBox.Width/2 - timeLabelSize.X/2,
 		Y: timeBox.Y + 5,
 	}, labelFontSize, 0, rl.LightGray)
 
-	timeValueSize := rl.MeasureTextEx(*f.Font, timeValue, valueFontSize, 0)
-	rl.DrawTextEx(*f.Font, timeValue, rl.Vector2{
+	timeValueSize := rl.MeasureTextEx(*f.Font, f.displayTime, valueFontSize, 0)
+	rl.DrawTextEx(*f.Font, f.displayTime, rl.Vector2{
 		X: timeBox.X + timeBox.Width/2 - timeValueSize.X/2,
 		Y: timeBox.Y + 30,
 	}, valueFontSize, 0, rl.NewColor(255, 193, 7, 255))
@@ -96,39 +97,49 @@ func (f *FinishScreen) Render() {
 	// Buttons
 	buttonWidth := cardWidth - boxSpacing*2
 	buttonHeight := float32(50)
+	buttonGap := float32(15)
 
 	restartButton := rl.NewRectangle(cardX+boxSpacing, cardY+250, buttonWidth, buttonHeight)
-	exitButton := rl.NewRectangle(cardX+boxSpacing, cardY+310, buttonWidth, buttonHeight)
+	nextStageButton := rl.NewRectangle(cardX+boxSpacing, cardY+250+buttonHeight+buttonGap, buttonWidth, buttonHeight)
+	exitButton := rl.NewRectangle(cardX+boxSpacing, cardY+250+2*(buttonHeight+buttonGap), buttonWidth, buttonHeight)
 
-	// Restart button
-	rl.DrawRectangleRounded(restartButton, 0.2, 5, PRIMARY_COLOR)
-	restartText := "Restart (R)"
-	restartSize := rl.MeasureTextEx(*f.Font, restartText, 20, 0)
-	rl.DrawTextEx(*f.Font, restartText, rl.Vector2{
-		X: restartButton.X + restartButton.Width/2 - restartSize.X/2,
-		Y: restartButton.Y + restartButton.Height/2 - restartSize.Y/2,
-	}, 20, 0, rl.Black)
+	if drawButton(f.Font, restartButton, "Restart (R)", 20, PRIMARY_COLOR, rl.Fade(PRIMARY_COLOR, 0.8)) {
+		ChangeScreen(&GameScreen{Font: f.Font, CurrentLevel: f.CurrentLevel})
+	}
 
-	// Exit button
-	rl.DrawRectangleRounded(exitButton, 0.2, 5, PRIMARY_COLOR)
-	exitText := "Exit (ESC)"
-	exitSize := rl.MeasureTextEx(*f.Font, exitText, 20, 0)
-	rl.DrawTextEx(*f.Font, exitText, rl.Vector2{
-		X: exitButton.X + exitButton.Width/2 - exitSize.X/2,
-		Y: exitButton.Y + exitButton.Height/2 - exitSize.Y/2,
-	}, 20, 0, rl.LightGray)
+	if f.NextLevel != "" && drawButton(f.Font, nextStageButton, "Next Stage", 20, PRIMARY_COLOR, rl.Fade(PRIMARY_COLOR, 0.8)) {
+		ChangeScreen(&GameScreen{Font: f.Font, CurrentLevel: f.NextLevel})
+	}
 
-	// Button click handling
+	if drawButton(f.Font, exitButton, "Exit (ESC)", 20, PRIMARY_COLOR, rl.Fade(PRIMARY_COLOR, 0.8)) {
+		ChangeScreen(&MenuScreen{Font: f.Font})
+	}
+
+	// Optional: support keyboard shortcuts
 	if rl.IsKeyPressed(rl.KeyR) {
-		ChangeScreen(&GameScreen{
-			Font: f.Font,
-		})
+		ChangeScreen(&GameScreen{Font: f.Font})
 	}
 	if rl.IsKeyPressed(rl.KeyEscape) {
-		ChangeScreen(&MenuScreen{
-			Font: f.Font,
-		})
+		ChangeScreen(&MenuScreen{Font: f.Font})
 	}
 }
 
 func (f *FinishScreen) Dispose() {}
+
+func drawButton(font *rl.Font, rect rl.Rectangle, text string, fontSize float32, normalColor, hoverColor rl.Color) bool {
+	mousePos := rl.GetMousePosition()
+	isHovered := rl.CheckCollisionPointRec(mousePos, rect)
+	color := normalColor
+	if isHovered {
+		color = hoverColor
+	}
+	rl.DrawRectangleRounded(rect, 0.2, 5, color)
+
+	textSize := rl.MeasureTextEx(*font, text, fontSize, 0)
+	rl.DrawTextEx(*font, text, rl.Vector2{
+		X: rect.X + rect.Width/2 - textSize.X/2,
+		Y: rect.Y + rect.Height/2 - textSize.Y/2,
+	}, fontSize, 0, rl.Black)
+
+	return isHovered && rl.IsMouseButtonPressed(rl.MouseLeftButton)
+}

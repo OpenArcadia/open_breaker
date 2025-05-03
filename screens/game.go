@@ -4,16 +4,13 @@ import (
 	"open_breaker/effects"
 	"open_breaker/entity"
 	"open_breaker/utility"
+	"time"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
-type State int
-
 type GameScreen struct {
-	State        State
-	StartTime    float64
-	EndTime      float64
+	StartTime    time.Time
 	CurrentLevel LevelName
 	Font         *rl.Font
 	Player       *entity.Player
@@ -43,6 +40,7 @@ func (g *GameScreen) Create() {
 
 	g.BounceSound = &bounceSound
 	g.BreakSound = &breakSound
+	g.StartTime = time.Now()
 
 	g.Ball = entity.NewBall(400, 300, &bounceSound)
 	g.Player = entity.NewPlayer(350, float32(rl.GetScreenHeight()-100))
@@ -110,9 +108,20 @@ func (g *GameScreen) Render() {
 		return b.Visible
 	})
 
-	if len(g.Bricks) == 0 {
+	if len(Filter(g.Bricks, func(b *entity.Brick) bool {
+		return b.Breakable
+	})) == 0 {
+		nextScreenMap := map[LevelName]LevelName{
+			LEVEL_ONE:   LEVEL_TWO,
+			LEVEL_TWO:   LEVEL_THREE,
+			LEVEL_THREE: LEVEL_FOUR,
+			LEVEL_FOUR:  LEVEL_FIVE,
+		}
 		ChangeScreen(&FinishScreen{
-			Font: g.Font,
+			Font:      g.Font,
+			StartTime: g.StartTime,
+			EndTime:   time.Now(),
+			NextLevel: nextScreenMap[g.CurrentLevel],
 		})
 	}
 
